@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOTRA Silicon Valley · 베이 지역 호텔 가이드</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F2EC;
+    --paper: #FBFAF6;
+    --paper-warm: #F0EBDD;
+    --ink: #1A2942;
+    --ink-soft: #4A5876;
+    --ink-faint: #8B96AC;
+    --gold: #B8895A;
+    --gold-dark: #8E6840;
+    --rule: #DDD6C7;
+    --kotra-blue: #1B3A8B;
+    --landmark: #B83C36;
+    --kotra: #2A6B5C;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ─── Header ─── */
+  header.main-header {
+    height: 76px;
+    padding: 0 24px 0 32px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1000;
+    gap: 20px;
+  }
+  .brand { display: flex; align-items: center; gap: 18px; min-width: 0; flex-shrink: 0; }
+  .brand-logo { height: 42px; width: auto; display: block; }
+  .brand-sub {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding-left: 18px;
+    border-left: 1px solid var(--rule);
+    white-space: nowrap;
+    line-height: 1.5;
+  }
+  .brand-sub em {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    color: var(--gold-dark);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .city-tabs { display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; flex: 1; }
+  .city-tab {
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 14px;
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.18s, color 0.18s;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .city-tab:hover { color: var(--ink); background: rgba(26,41,66,0.05); }
+  .city-tab.active { color: var(--paper); background: var(--ink); }
+
+  .utility-controls { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+  .lang-toggle {
+    display: flex;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    height: 30px;
+  }
+  .lang-toggle button {
+    background: transparent;
+    border: none;
+    padding: 0 10px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+    min-width: 36px;
+  }
+  .lang-toggle button.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .icon-btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .icon-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+  /* ─── Layout ─── */
+  main { display: flex; height: calc(100% - 76px); }
+
+  aside {
+    width: 460px;
+    flex-shrink: 0;
+    background: var(--paper);
+    border-right: 1px solid var(--rule);
+    overflow-y: auto;
+    padding: 32px 34px 80px;
+  }
+
+  .panel-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .panel-title {
+    font-family: 'Fraunces', serif;
+    font-size: 40px;
+    font-weight: 400;
+    line-height: 1.08;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .panel-title .accent {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--gold-dark);
+  }
+  .panel-subtitle {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .panel-counts {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 14px;
+    letter-spacing: 0.04em;
+    display: flex;
+    gap: 18px;
+    align-items: baseline;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .panel-counts span b {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    margin-right: 5px;
+  }
+
+  /* ─── Search & Sort ─── */
+  .search-wrap {
+    margin-top: 28px;
+    position: relative;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    border-radius: 2px;
+    font-size: 13px;
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    color: var(--ink);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .search-input::placeholder { color: var(--ink-faint); }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: var(--paper);
+  }
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+  .search-icon svg { width: 100%; height: 100%; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+  .sort-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .sort-chip {
+    padding: 6px 10px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    letter-spacing: 0.01em;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .sort-chip:hover { background: var(--paper-warm); color: var(--ink); }
+  .sort-chip.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+
+  .panel-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 30px 0 14px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    gap: 12px;
+  }
+  .panel-section-head h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .panel-section-head .small {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  /* ─── Hotel Card ─── */
+  .hotel-card {
+    padding: 16px 12px 18px;
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer;
+    transition: padding 0.22s ease, background 0.22s ease, border-left-color 0.22s ease;
+    border-left: 2px solid transparent;
+    margin: 0 -14px;
+    position: relative;
+  }
+  .hotel-card:last-of-type { border-bottom: none; }
+  .hotel-card:hover { background: rgba(184,137,90,0.05); }
+  .hotel-card.active {
+    background: var(--paper-warm);
+    border-left-color: var(--gold);
+  }
+
+  .hotel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 14px;
+    padding-right: 26px;
+  }
+  .hotel-name {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.22;
+    flex: 1;
+    letter-spacing: -0.005em;
+  }
+  .hotel-num {
+    font-family: 'Fraunces', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--gold-dark);
+    margin-top: 5px;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .hotel-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .hotel-city {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+  .distance-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    border-radius: 10px;
+    letter-spacing: 0.02em;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+  }
+  .distance-badge .to {
+    color: var(--gold-dark);
+    margin-right: 4px;
+    font-weight: 500;
+  }
+  .coming-soon-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    background: rgba(27,58,139,0.10);
+    color: var(--kotra-blue);
+    border: 1px solid rgba(27,58,139,0.22);
+    border-radius: 10px;
+    letter-spacing: 0.02em;
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    font-weight: 600;
+    font-style: italic;
+  }
+  .hotel-price {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+    margin-top: 2px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .hotel-price .approx {
+    font-size: 10px;
+    color: var(--ink-faint);
+    font-weight: 400;
+    margin-right: 6px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-family: 'Manrope', sans-serif;
+  }
+  .hotel-address {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 8px;
+    line-height: 1.4;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  /* Compare checkbox */
+  .compare-check {
+    position: absolute;
+    top: 14px;
+    right: 12px;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--rule);
+    border-radius: 2px;
+    background: var(--paper);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    z-index: 2;
+  }
+  .compare-check:hover { border-color: var(--gold); }
+  .compare-check.checked {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .compare-check.checked::after {
+    content: '✓';
+    color: var(--paper);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .compare-check.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* ─── Landmark Card ─── */
+  .landmark-card {
+    padding: 16px 18px;
+    background: var(--paper-warm);
+    border-left: 3px solid var(--landmark);
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.18s;
+    border-radius: 0 2px 2px 0;
+  }
+  .landmark-card.kotra { border-left-color: var(--kotra); }
+  .landmark-card:hover { background: #E9E2D0; transform: translateX(2px); }
+  .landmark-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--landmark);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .landmark-card.kotra .landmark-eyebrow { color: var(--kotra); }
+  .landmark-name {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .landmark-name .ko {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-style: italic;
+    font-weight: 400;
+    margin-left: 6px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .landmark-city {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  .panel-footer {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .panel-footer .updated {
+    margin-top: 6px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 11px;
+  }
+
+  /* ─── Map ─── */
+  #map-wrap { position: relative; flex: 1; height: 100%; }
+  #map { width: 100%; height: 100%; background: #E8E2D2; }
+  .leaflet-container { background: #E8E2D2; font-family: 'Manrope', sans-serif; }
+  .leaflet-control-attribution {
+    background: rgba(251,250,246,0.85) !important;
+    font-size: 10px !important;
+    color: var(--ink-faint) !important;
+  }
+  .leaflet-control-zoom a {
+    background: var(--paper) !important;
+    color: var(--ink) !important;
+    border-color: var(--rule) !important;
+  }
+  .leaflet-marker-icon { background: transparent !important; border: none !important; }
+
+  .marker-hotel {
+    width: 30px; height: 30px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 13px; font-weight: 600;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.28), 0 1px 2px rgba(0,0,0,0.15);
+    border: 2px solid var(--paper);
+    cursor: pointer;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+  .marker-hotel:hover, .marker-hotel.active {
+    transform: scale(1.18);
+    background: var(--gold-dark);
+  }
+  .marker-landmark {
+    width: 38px; height: 38px;
+    background: var(--landmark);
+    color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    border: 2px solid var(--paper);
+    cursor: pointer;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+  }
+  .marker-landmark:hover { transform: rotate(45deg) scale(1.12); }
+  .marker-landmark .icon {
+    transform: rotate(-45deg);
+    font-size: 15px; font-weight: 700; line-height: 1;
+  }
+  .marker-landmark.kotra { background: var(--kotra); }
+
+  .leaflet-tooltip {
+    background: var(--ink);
+    border: none;
+    color: var(--paper);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 11px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.22);
+    border-radius: 2px;
+  }
+  .leaflet-tooltip-top:before { border-top-color: var(--ink); }
+
+  aside::-webkit-scrollbar { width: 6px; }
+  aside::-webkit-scrollbar-track { background: transparent; }
+  aside::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+  /* ─── Legend ─── */
+  .legend {
+    position: absolute;
+    bottom: 22px; right: 22px;
+    background: var(--paper);
+    padding: 14px 16px;
+    border-radius: 2px;
+    box-shadow: 0 3px 16px rgba(26,41,66,0.12);
+    z-index: 500;
+    border: 1px solid var(--rule);
+    min-width: 190px;
+  }
+  .legend-title {
+    font-family: 'Fraunces', serif;
+    font-size: 11px;
+    font-style: italic;
+    color: var(--ink);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    margin: 5px 0;
+    color: var(--ink-soft);
+    font-size: 11px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .legend-dot {
+    width: 13px; height: 13px; flex-shrink: 0;
+    border: 1.5px solid var(--paper);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .legend-dot.hotel { background: var(--ink); border-radius: 50%; }
+  .legend-dot.landmark { background: var(--landmark); transform: rotate(45deg); }
+  .legend-dot.kotra { background: var(--kotra); transform: rotate(45deg); }
+
+  /* ─── Map Hint ─── */
+  .map-hint {
+    position: absolute;
+    top: 18px; left: 18px;
+    background: rgba(251,250,246,0.92);
+    backdrop-filter: blur(8px);
+    padding: 10px 14px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    z-index: 500;
+    max-width: 320px;
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: opacity 0.4s;
+  }
+  .map-hint.fade { opacity: 0; pointer-events: none; }
+  .map-hint b {
+    color: var(--gold-dark);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  /* ─── Compare FAB ─── */
+  .compare-fab {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    box-shadow: 0 8px 24px rgba(26,41,66,0.4), 0 2px 6px rgba(26,41,66,0.2);
+    z-index: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .compare-fab:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 12px 28px rgba(26,41,66,0.5), 0 2px 6px rgba(26,41,66,0.2);
+  }
+  .compare-fab .count {
+    background: var(--gold);
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .compare-fab[hidden] { display: none; }
+  .compare-fab .arrow { font-size: 14px; }
+
+  /* ─── Hotel Popup ─── */
+  .leaflet-popup-content-wrapper.hotel-popup-wrapper {
+    background: var(--paper);
+    border-radius: 4px;
+    box-shadow: 0 10px 40px rgba(26,41,66,0.22), 0 2px 8px rgba(26,41,66,0.08);
+    padding: 0;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .leaflet-popup-content-wrapper.hotel-popup-wrapper .leaflet-popup-content {
+    margin: 0;
+    width: 300px !important;
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+  }
+  .leaflet-popup-tip-container .leaflet-popup-tip {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    box-shadow: 0 4px 14px rgba(26,41,66,0.12);
+  }
+  .leaflet-popup-close-button {
+    color: var(--paper) !important;
+    font-size: 22px !important;
+    font-weight: 300 !important;
+    padding: 6px 9px !important;
+    width: auto !important; height: auto !important;
+    line-height: 1 !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    z-index: 10;
+  }
+  .leaflet-popup-close-button:hover { color: var(--gold) !important; }
+
+  .hotel-popup { font-family: 'Manrope', 'Noto Sans KR', sans-serif; }
+
+  .popup-photo {
+    height: 140px;
+    position: relative;
+    overflow: hidden;
+    color: rgba(255,255,255,0.96);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px 18px 14px;
+  }
+  .popup-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .popup-photo::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.10) 0%, transparent 40%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 14px);
+    z-index: 2;
+  }
+  .popup-photo::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.45) 100%);
+    z-index: 2;
+  }
+  .popup-photo > * { position: relative; z-index: 3; }
+  .popup-photo-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+  }
+  .popup-photo-city {
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.92;
+  }
+
+  .popup-body {
+    padding: 16px 18px 18px;
+    background: var(--paper);
+  }
+  .popup-name {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .popup-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+  .popup-price {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    flex-shrink: 0;
+  }
+  .popup-price .approx {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-right: 5px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+  }
+  .popup-address {
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-align: right;
+    line-height: 1.4;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .popup-details {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 8px 14px;
+    align-items: baseline;
+    font-size: 12px;
+  }
+  .popup-details .label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    font-weight: 700;
+    padding-top: 2px;
+  }
+  .popup-details .value {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .popup-details .value.code {
+    display: inline-block;
+    font-family: 'Manrope', monospace;
+    font-weight: 600;
+    font-size: 12px;
+    background: var(--paper-warm);
+    padding: 3px 7px;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    letter-spacing: 0.04em;
+    color: var(--kotra-blue);
+  }
+  .popup-details .value a {
+    color: var(--kotra-blue);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    transition: border-color 0.15s;
+  }
+  .popup-details .value a:hover { border-bottom-color: var(--kotra-blue); }
+
+  .popup-note {
+    margin-top: 12px;
+    padding: 9px 11px;
+    background: rgba(27,58,139,0.06);
+    border-left: 2px solid var(--kotra-blue);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    font-family: 'Noto Sans KR', sans-serif;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .popup-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .popup-action {
+    flex: 1;
+    padding: 9px 8px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .popup-action:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .popup-action.primary {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .popup-action.primary:hover {
+    background: var(--gold-dark);
+    border-color: var(--gold-dark);
+  }
+  .popup-action svg {
+    width: 12px; height: 12px;
+    stroke: currentColor; fill: none; stroke-width: 2;
+  }
+  .popup-action.disabled {
+    background: var(--paper-warm);
+    color: var(--ink-faint);
+    border-color: var(--rule);
+    cursor: default;
+    pointer-events: none;
+  }
+  .popup-action.coming-soon {
+    background: rgba(27,58,139,0.08);
+    color: var(--kotra-blue);
+    border-color: rgba(27,58,139,0.25);
+    cursor: default;
+    pointer-events: none;
+    font-style: italic;
+  }
+
+  /* ─── Compare Modal ─── */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(26,41,66,0.55);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-backdrop[hidden] { display: none; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .compare-modal {
+    background: var(--paper);
+    border-radius: 6px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    max-width: 1100px;
+    width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .compare-modal-head {
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--paper);
+  }
+  .compare-modal-head h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .compare-modal-head h2 em {
+    font-style: italic;
+    color: var(--gold-dark);
+    font-weight: 300;
+  }
+  .compare-modal-head .actions { display: flex; gap: 8px; }
+  .compare-modal-head button {
+    background: transparent;
+    border: 1px solid var(--rule);
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    letter-spacing: 0.03em;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+  .compare-modal-head button:hover {
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
+  }
+  .compare-modal-body {
+    overflow-y: auto;
+    padding: 28px;
+    flex: 1;
+  }
+  .compare-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .compare-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .compare-card .photo {
+    height: 110px;
+    position: relative;
+    color: white;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .compare-card .photo::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 14px);
+  }
+  .compare-card .photo::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.4) 100%);
+  }
+  .compare-card .photo > * { position: relative; z-index: 2; }
+  .compare-card .photo .num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 12px;
+    opacity: 0.85;
+  }
+  .compare-card .photo .city {
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.92;
+  }
+  .compare-card .body { padding: 16px 18px 18px; flex: 1; }
+  .compare-card .name {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.22;
+    margin-bottom: 6px;
+    letter-spacing: -0.005em;
+  }
+  .compare-card .addr {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.4;
+  }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 6px 12px;
+    align-items: baseline;
+    padding: 8px 0;
+    border-top: 1px dashed var(--rule);
+    font-size: 12px;
+  }
+  .compare-row .lbl {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    font-weight: 700;
+  }
+  .compare-row .val {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .compare-row .val.code {
+    display: inline-block;
+    font-family: 'Manrope', monospace;
+    font-weight: 600;
+    font-size: 11px;
+    background: var(--paper-warm);
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    color: var(--kotra-blue);
+  }
+  .compare-distances {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+  }
+  .compare-distances .head {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .compare-distances .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 3px 0;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .compare-distances .row .to-label { color: var(--ink-soft); }
+  .compare-distances .row .dist {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .compare-card .actions {
+    padding: 0 18px 18px;
+    display: flex;
+    gap: 6px;
+  }
+  .compare-card .actions .btn {
+    flex: 1;
+    padding: 9px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .compare-card .actions .btn:hover {
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
+  }
+  .compare-card .actions .btn.primary {
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
+  }
+  .compare-card .actions .btn.primary:hover {
+    background: var(--gold-dark); border-color: var(--gold-dark);
+  }
+  .compare-card .actions .btn.disabled {
+    background: var(--paper-warm);
+    color: var(--ink-faint);
+    border-color: var(--rule);
+    cursor: default;
+    pointer-events: none;
+  }
+  .compare-card .actions .btn.coming-soon {
+    background: rgba(27,58,139,0.08);
+    color: var(--kotra-blue);
+    border-color: rgba(27,58,139,0.25);
+    cursor: default;
+    pointer-events: none;
+    font-style: italic;
+  }
+
+  /* ─── Print ─── */
+  @media print {
+    @page { margin: 14mm; size: letter; }
+    html, body { height: auto; overflow: visible; background: white; }
+    header.main-header, .legend, .map-hint, #map-wrap, .compare-fab,
+    .city-tabs, .utility-controls, .search-wrap, .sort-chips, .compare-check {
+      display: none !important;
+    }
+    aside {
+      width: 100% !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      border: none !important;
+    }
+    main { display: block !important; height: auto !important; }
+    .hotel-card {
+      page-break-inside: avoid;
+      border-bottom: 1px solid #ccc !important;
+      background: white !important;
+      padding: 14px 0 !important;
+      margin: 0 !important;
+      border-left: none !important;
+    }
+    .panel-title { font-size: 28px !important; }
+    .modal-backdrop { display: none !important; }
+
+    /* Comparison-only print */
+    body.print-comparison aside { display: none !important; }
+    body.print-comparison .modal-backdrop {
+      display: flex !important;
+      position: static !important;
+      background: white !important;
+      padding: 0 !important;
+      backdrop-filter: none !important;
+    }
+    body.print-comparison .compare-modal {
+      box-shadow: none !important;
+      max-height: none !important;
+    }
+    body.print-comparison .compare-modal-head .actions { display: none !important; }
+    body.print-comparison .compare-card .actions { display: none !important; }
+  }
+
+  @media (max-width: 1200px) { .brand-sub { display: none; } }
+  @media (max-width: 1024px) {
+    header.main-header { padding: 0 16px; }
+    .city-tab { padding: 8px 10px; font-size: 12px; }
+  }
+  @media (max-width: 980px) {
+    main { flex-direction: column; }
+    aside { width: 100%; max-height: 55vh; padding: 20px 18px 60px; }
+    #map-wrap { min-height: 45vh; }
+    header.main-header {
+      flex-direction: column; height: auto; padding: 12px 14px; gap: 10px;
+    }
+    .city-tabs { justify-content: center; order: 2; }
+    .utility-controls { order: 1; align-self: flex-end; }
+    .panel-title { font-size: 32px; }
+    .legend { bottom: 12px; right: 12px; padding: 10px 12px; min-width: 0; }
+    .leaflet-popup-content-wrapper.hotel-popup-wrapper .leaflet-popup-content {
+      width: 260px !important;
+    }
+    .compare-modal-body { padding: 18px; }
+    .compare-modal-head { padding: 16px 18px; }
+    .compare-modal-head h2 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="brand">
+      <img class="brand-logo" src="data:image/png;base64,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" alt="KOTRA Silicon Valley">
+      <div class="brand-sub" id="brandSub">Bay Area Hotel Guide<br><em>베이지역 호텔 가이드</em></div>
+    </div>
+    <div class="city-tabs" id="cityTabs"></div>
+    <div class="utility-controls">
+      <div class="lang-toggle" id="langToggle">
+        <button data-lang="ko" class="active">한</button>
+        <button data-lang="en">EN</button>
+      </div>
+      <button class="icon-btn" id="printBtn" title="Print">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <aside id="panel"></aside>
+    <div id="map-wrap">
+      <div id="map"></div>
+      <div class="map-hint" id="mapHint"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </main>
+
+  <button class="compare-fab" id="compareFab" hidden>
+    <span id="compareFabLabel"></span>
+    <span class="count" id="compareFabCount">0</span>
+    <span class="arrow">→</span>
+  </button>
+
+  <div class="modal-backdrop" id="compareModal" hidden>
+    <div class="compare-modal" id="compareModalInner">
+      <div class="compare-modal-head">
+        <h2 id="compareModalTitle"></h2>
+        <div class="actions">
+          <button id="printCompareBtn"></button>
+          <button id="closeCompareBtn"></button>
+        </div>
+      </div>
+      <div class="compare-modal-body" id="compareModalBody"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+  <script>
+    /* ═══════════════════════════════════════════════════════
+       DATA — edit hotel info / promo codes / contacts here
+       ═══════════════════════════════════════════════════════ */
+    const BOOKING_EMAIL = 'kotrasv@example.com'; // ← change to actual KOTRA SV booking contact
+    const LAST_UPDATED = '2026-05-15';
+
+    const cities = {
+      all: { name: 'Bay Area', name_ko: '베이 지역 전체', center: [37.55, -122.15], zoom: 10 },
+      sf:  { name: 'San Francisco', name_ko: '샌프란시스코', center: [37.7843, -122.4007], zoom: 14 },
+      mtv: { name: 'Mountain View', name_ko: '마운틴뷰', center: [37.4100, -122.0710], zoom: 14 },
+      cup: { name: 'Cupertino', name_ko: '쿠퍼티노', center: [37.3290, -122.0322], zoom: 14 },
+      sc:  { name: 'Santa Clara', name_ko: '산타클라라', center: [37.3905, -121.9550], zoom: 14 },
+      sj:  { name: 'San Jose', name_ko: '산호세', center: [37.3924, -121.9336], zoom: 14 }
+    };
+
+    const hotels = [
+      { id: 1, name: 'Hyatt Regency Santa Clara', city: 'sc', cityName: 'Santa Clara',
+        rate: 'Up to 10%', coord: [37.4051, -121.9769],
+        address: '5101 Great America Pkwy, Santa Clara',
+        promo_code: '[코드 입력]', contact: '+1 408-200-1234', website: '', pending_soon: true,
+        note_ko: "Levi's Stadium·컨벤션센터 인근. KOTRA 추천 시 적용.",
+        note_en: "Near Levi's Stadium & Convention Center. KOTRA referral.",
+        photo_url: '', color: ['#1E3A5F', '#3E5A7F'] },
+      { id: 2, name: 'Hyatt House Santa Clara', city: 'sc', cityName: 'Santa Clara',
+        rate: '$260 or under', coord: [37.3945, -121.9447],
+        address: '3915 Rivermark Plaza, Santa Clara',
+        promo_code: '[코드 입력]', contact: '+1 408-486-0800', website: '', pending_soon: true,
+        note_ko: 'KOTRA 추천 시 적용. 예약 전 KOTRA SV로 문의 부탁드립니다.',
+        note_en: 'Applied with KOTRA referral. Contact KOTRA SV before booking.',
+        photo_url: '', color: ['#8E6840', '#B8895A'] },
+      { id: 3, name: 'Hyatt House San Jose', city: 'sj', cityName: 'San Jose',
+        rate: '$250 or under', coord: [37.4166, -121.9530],
+        address: '75 Headquarters Dr, San Jose',
+        promo_code: '[코드 입력]', contact: '+1 408-324-1155', website: '', pending_soon: true,
+        note_ko: 'KOTRA 사무소 인근(North San Jose). KOTRA 추천 시 적용.',
+        note_en: 'Near KOTRA office (North San Jose). KOTRA referral.',
+        photo_url: '', color: ['#5E3A5A', '#7E5A7A'] },
+      { id: 4, name: 'Delta Hotels Santa Clara Silicon Valley', city: 'sc', cityName: 'Santa Clara',
+        rate: '$249 or under', coord: [37.3837, -121.9622],
+        address: '2151 Laurelwood Rd, Santa Clara',
+        promo_code: 'A5764', contact: '+1 408-988-8411',
+        website: 'https://www.marriott.com/event-reservations/reservation-link.mi?guestreslink2=true&id=1779920507719&key=CORP',
+        note_ko: 'KOTRA 추천 시 적용. 예약 전 KOTRA SV로 문의 부탁드립니다.',
+        note_en: 'Applied with KOTRA referral. Contact KOTRA SV before booking.',
+        photo_url: '', color: ['#2A5F66', '#4A8C8F'] },
+      { id: 5, name: 'Holiday Inn Express & Suites Mountain View', city: 'mtv', cityName: 'Mountain View',
+        rate: '$205 or under', coord: [37.4065, -122.0644],
+        address: '5 Fairchild Dr, Mountain View',
+        promo_code: '958389081', contact: '+1 650-934-0155',
+        website: 'https://www.ihg.com/holidayinnexpress/hotels/us/en/mountain-view/mtvsw/hoteldetail?fromRedirect=true&qSrt=sBR&qIta=99502056&icdv=99502056&qSlH=MTVSW&qCpid=958389081&setPMCookies=true&qSHBrC=EX&qDest=1561%20West%20El%20Camino%20Real%2C%20Mountain%20View%2C%20CA%2C%20US&showApp=true&adjustMonth=false&srb_u=1',
+        note_ko: 'KOTRA 추천 시 적용. 예약 전 KOTRA SV로 문의 부탁드립니다.',
+        note_en: 'Applied with KOTRA referral. Contact KOTRA SV before booking.',
+        photo_url: '', color: ['#2C4870', '#4A6FA0'] },
+      { id: 6, name: 'Juniper Hotel Cupertino', city: 'cup', cityName: 'Cupertino',
+        rate: 'Up to 10%', coord: [37.3214, -122.0315],
+        address: '10050 S De Anza Blvd, Cupertino',
+        promo_code: '[코드 입력]', contact: '+1 408-253-8900', website: '', pending_soon: true,
+        note_ko: 'Curio Collection by Hilton. KOTRA 추천 시 적용.',
+        note_en: 'Curio Collection by Hilton. Applied with KOTRA referral.',
+        photo_url: '', color: ['#4A6741', '#7A9870'] }
+    ];
+
+    const landmarks = [
+      { id: 'kotra', name: 'KOTRA Silicon Valley', name_ko: 'KOTRA 실리콘밸리',
+        short: 'KOTRA',
+        address: '3003 N First St, San Jose', city: 'sj',
+        coord: [37.3924, -121.9336], type: 'kotra' },
+      { id: 'chm', name: 'Computer History Museum', name_ko: '컴퓨터 역사박물관',
+        short: 'CHM',
+        address: '1401 N Shoreline Blvd, Mountain View', city: 'mtv',
+        coord: [37.4143, -122.0774], type: 'venue' },
+      { id: 'moscone', name: 'Moscone Center', name_ko: '모스콘 센터',
+        short: 'Moscone',
+        address: '747 Howard St, San Francisco', city: 'sf',
+        coord: [37.7843, -122.4007], type: 'venue' }
+    ];
+
+    /* ═══════════════════════════════════════════════════════
+       I18N
+       ═══════════════════════════════════════════════════════ */
+    const i18n = {
+      ko: {
+        brand_sub_1: 'Bay Area Hotel Guide', brand_sub_2: '베이지역 호텔 가이드',
+        all: '전체 · All',
+        overview: 'Overview · 전체보기',
+        selected_city: 'Selected City · 선택 지역',
+        hotels: '호텔', landmarks: '주요지점',
+        kotra_hotels: 'KOTRA Rate Hotels',
+        no_hotels: '해당 지역에 등록된 KOTRA Rate 호텔이 없습니다.',
+        venues_office: 'Venues & Office',
+        venues_office_sub: '행사장 · 사무소',
+        listed: 'listed',
+        search_placeholder: '호텔명·도시 검색',
+        sort_default: '기본순',
+        sort_chm: 'CHM 가까운순',
+        sort_moscone: 'Moscone 가까운순',
+        sort_kotra: 'KOTRA 가까운순',
+        compare_fab: '선택한 호텔 비교',
+        compare_modal_title: 'Hotel <em>Comparison</em>',
+        compare_close: '닫기',
+        print_comparison: '비교 인쇄',
+        book_kotra_rate: '예약 링크',
+        link_pending: '링크 준비중',
+        coming_soon: '협약 진행중',
+        get_directions: '길찾기',
+        last_updated: '최종 업데이트',
+        map_hint: '<b>마커</b>나 좌측 호텔을 클릭하면 지도 위에 상세 카드가 나타납니다.',
+        panel_footer_line1: 'KOTRA Silicon Valley IT Business Center',
+        panel_footer_line2: '요금은 변동될 수 있으며 예약 시 확인 부탁드립니다.',
+        kotra_office: 'KOTRA Office',
+        event_venue: 'Event Venue',
+        legend_title: 'Legend · 범례',
+        legend_hotel: 'KOTRA Rate 호텔',
+        legend_kotra: 'KOTRA 사무소',
+        legend_venue: '주요 행사장',
+        distance_from: '↑',
+        discount: 'Preferred Rate',
+        rate_label: 'Preferred Rate',
+        promo: 'Promo',
+        contact: 'Contact',
+        address: 'Address',
+        price: 'Preferred Rate'
+      },
+      en: {
+        brand_sub_1: 'Bay Area Hotel Guide', brand_sub_2: 'KOTRA Silicon Valley',
+        all: 'All · 전체',
+        overview: 'Overview',
+        selected_city: 'Selected City',
+        hotels: 'Hotels', landmarks: 'Landmarks',
+        kotra_hotels: 'KOTRA Rate Hotels',
+        no_hotels: 'No KOTRA Rate hotels listed in this area.',
+        venues_office: 'Venues & Office',
+        venues_office_sub: 'Event venues · office',
+        listed: 'listed',
+        search_placeholder: 'Search hotel or city',
+        sort_default: 'Default',
+        sort_chm: 'Nearest to CHM',
+        sort_moscone: 'Nearest to Moscone',
+        sort_kotra: 'Nearest to KOTRA',
+        compare_fab: 'Compare selected',
+        compare_modal_title: 'Hotel <em>Comparison</em>',
+        compare_close: 'Close',
+        print_comparison: 'Print',
+        book_kotra_rate: 'Reservation',
+        link_pending: 'Link coming soon',
+        coming_soon: 'In Progress',
+        get_directions: 'Directions',
+        last_updated: 'Last updated',
+        map_hint: 'Click a <b>marker</b> or a hotel in the sidebar to see details.',
+        panel_footer_line1: 'KOTRA Silicon Valley IT Business Center',
+        panel_footer_line2: 'Rates subject to change. Please confirm before booking.',
+        kotra_office: 'KOTRA Office',
+        event_venue: 'Event Venue',
+        legend_title: 'Legend',
+        legend_hotel: 'KOTRA Rate hotels',
+        legend_kotra: 'KOTRA office',
+        legend_venue: 'Event venues',
+        distance_from: '↑',
+        discount: 'Preferred Rate',
+        rate_label: 'Preferred Rate',
+        promo: 'Promo',
+        contact: 'Contact',
+        address: 'Address',
+        price: 'Preferred Rate'
+      }
+    };
+
+    const cityLabels = {
+      ko: { all: '전체', sf: 'San Francisco', mtv: 'Mountain View', cup: 'Cupertino', sc: 'Santa Clara', sj: 'San Jose' },
+      en: { all: 'All', sf: 'San Francisco', mtv: 'Mountain View', cup: 'Cupertino', sc: 'Santa Clara', sj: 'San Jose' }
+    };
+
+    /* ═══════════════════════════════════════════════════════
+       STATE
+       ═══════════════════════════════════════════════════════ */
+    const state = {
+      activeCity: 'all',
+      activeHotelId: null,
+      searchQuery: '',
+      sortBy: 'default',
+      language: 'ko',
+      compareIds: new Set()
+    };
+    const MAX_COMPARE = 3;
+
+    function t(key) { return i18n[state.language][key]; }
+    function cityLabel(key) { return cityLabels[state.language][key] || cities[key].name; }
+    function hotelNote(h) { return state.language === 'ko' ? h.note_ko : h.note_en; }
+
+    /* ═══════════════════════════════════════════════════════
+       UTILITIES
+       ═══════════════════════════════════════════════════════ */
+    function distMiles(c1, c2) {
+      const R = 3958.8;
+      const dLat = (c2[0] - c1[0]) * Math.PI / 180;
+      const dLon = (c2[1] - c1[1]) * Math.PI / 180;
+      const lat1 = c1[0] * Math.PI / 180;
+      const lat2 = c2[0] * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+    function formatDistance(d) {
+      if (d < 1) return d.toFixed(1) + ' mi';
+      if (d < 10) return d.toFixed(1) + ' mi';
+      return Math.round(d) + ' mi';
+    }
+    function getLandmark(id) { return landmarks.find(l => l.id === id); }
+
+    function getFilteredHotels() {
+      let result = state.activeCity === 'all'
+        ? hotels.slice()
+        : hotels.filter(h => h.city === state.activeCity);
+
+      if (state.searchQuery) {
+        const q = state.searchQuery.toLowerCase().trim();
+        result = result.filter(h =>
+          h.name.toLowerCase().includes(q) ||
+          h.cityName.toLowerCase().includes(q) ||
+          h.address.toLowerCase().includes(q)
+        );
+      }
+
+      if (state.sortBy !== 'default') {
+        const target = getLandmark(state.sortBy);
+        if (target) {
+          result.sort((a, b) => distMiles(a.coord, target.coord) - distMiles(b.coord, target.coord));
+        }
+      }
+      return result;
+    }
+
+    function buildMailto(h) {
+      const subject = state.language === 'ko'
+        ? `[KOTRA Rate 예약 문의] ${h.name}`
+        : `[KOTRA Rate Booking Inquiry] ${h.name}`;
+      const body = state.language === 'ko'
+        ? `KOTRA SV 담당자님께,\n\nKOTRA Rate 적용 예약을 문의드립니다.\n\n호텔: ${h.name}\n주소: ${h.address}\n프로모코드: ${h.promo_code}\n\n체크인: \n체크아웃: \n인원: \n예약자명: \n연락처: \n\n감사합니다.`
+        : `Hello KOTRA SV,\n\nI'd like to inquire about a booking with the KOTRA Rate.\n\nHotel: ${h.name}\nAddress: ${h.address}\nPromo Code: ${h.promo_code}\n\nCheck-in: \nCheck-out: \nGuests: \nName: \nContact: \n\nThank you.`;
+      return `mailto:${BOOKING_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+    function buildDirections(coord) {
+      return `https://www.google.com/maps/dir/?api=1&destination=${coord[0]},${coord[1]}`;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       MAP
+       ═══════════════════════════════════════════════════════ */
+    const map = L.map('map', {
+      center: cities.all.center,
+      zoom: cities.all.zoom,
+      zoomControl: false,
+      attributionControl: true,
+      zoomSnap: 0.5
+    });
+    L.control.zoom({ position: 'topright' }).addTo(map);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap · CARTO', maxZoom: 19, subdomains: 'abcd'
+    }).addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19, subdomains: 'abcd', pane: 'shadowPane'
+    }).addTo(map);
+
+    const hotelMarkers = {}, landmarkMarkers = {};
+
+    function buildHotelPopup(h) {
+      const num = hotels.findIndex(x => x.id === h.id) + 1;
+      const telLink = h.contact.replace(/[^+\d]/g, '');
+      const photoHtml = h.photo_url
+        ? `<img src="${h.photo_url}" alt="${h.name}" onerror="this.style.display='none'">`
+        : '';
+      const bgStyle = `background: linear-gradient(135deg, ${h.color[0]} 0%, ${h.color[1]} 100%);`;
+      const note = hotelNote(h);
+      return `
+        <div class="hotel-popup">
+          <div class="popup-photo" style="${bgStyle}">
+            ${photoHtml}
+            <div class="popup-photo-num">№ ${String(num).padStart(2, '0')}</div>
+            <div class="popup-photo-city">${h.cityName}</div>
+          </div>
+          <div class="popup-body">
+            <div class="popup-name">${h.name}</div>
+            <div class="popup-price-row">
+              <div class="popup-price">${h.rate}</div>
+              <div class="popup-address">${h.address}</div>
+            </div>
+            <div class="popup-details">
+              <div class="label">${t('promo')}</div>
+              <div class="value"><span class="code">${h.promo_code}</span></div>
+              <div class="label">${t('contact')}</div>
+              <div class="value"><a href="tel:${telLink}">${h.contact}</a></div>
+            </div>
+            ${note ? `<div class="popup-note">${note}</div>` : ''}
+            <div class="popup-actions">
+              ${h.website
+                ? `<a href="${h.website}" target="_blank" rel="noopener" class="popup-action primary">
+                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                     ${t('book_kotra_rate')}
+                   </a>`
+                : h.pending_soon
+                  ? `<span class="popup-action primary coming-soon">${t('coming_soon')}</span>`
+                  : `<span class="popup-action primary disabled">${t('link_pending')}</span>`}
+              <a href="${buildDirections(h.coord)}" target="_blank" rel="noopener" class="popup-action">
+                <svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                ${t('get_directions')}
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function rebuildPopups() {
+      hotels.forEach(h => {
+        if (hotelMarkers[h.id]) {
+          hotelMarkers[h.id].setPopupContent(buildHotelPopup(h));
+        }
+      });
+    }
+
+    hotels.forEach((h, idx) => {
+      const num = idx + 1;
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="marker-hotel" data-id="${h.id}">${num}</div>`,
+        iconSize: [30, 30], iconAnchor: [15, 15]
+      });
+      const marker = L.marker(h.coord, { icon }).addTo(map);
+      marker.bindTooltip(h.name, { direction: 'top', offset: [0, -12] });
+      marker.bindPopup(buildHotelPopup(h), {
+        className: 'hotel-popup-wrapper',
+        maxWidth: 300, minWidth: 300,
+        offset: [0, -8],
+        autoPanPadding: [40, 40]
+      });
+      marker.on('click', () => {
+        state.activeHotelId = h.id;
+        if (state.activeCity !== 'all' && state.activeCity !== h.city) {
+          state.activeCity = h.city;
+          updateActiveTab();
+        }
+        renderPanel();
+        updateMarkerActiveState();
+        hideHint();
+      });
+      marker.on('popupclose', () => {
+        if (state.activeHotelId === h.id) {
+          state.activeHotelId = null;
+          updateMarkerActiveState();
+          document.querySelectorAll('.hotel-card.active').forEach(c => c.classList.remove('active'));
+        }
+      });
+      hotelMarkers[h.id] = marker;
+    });
+
+    landmarks.forEach(l => {
+      const isKotra = l.type === 'kotra';
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="marker-landmark ${isKotra ? 'kotra' : ''}"><span class="icon">${isKotra ? 'K' : '★'}</span></div>`,
+        iconSize: [38, 38], iconAnchor: [19, 19]
+      });
+      const marker = L.marker(l.coord, { icon }).addTo(map);
+      marker.bindTooltip(l.name + ' · ' + l.name_ko, { direction: 'top', offset: [0, -18] });
+      marker.on('click', () => {
+        const city = cities[l.city];
+        map.flyTo(l.coord, city.zoom, { duration: 1.0 });
+        if (l.city !== state.activeCity) {
+          state.activeCity = l.city;
+          updateActiveTab();
+          renderPanel();
+        }
+        hideHint();
+      });
+      landmarkMarkers[l.id] = marker;
+    });
+
+    /* ═══════════════════════════════════════════════════════
+       RENDER
+       ═══════════════════════════════════════════════════════ */
+    function titleWithAccent(name) {
+      const words = name.split(' ');
+      if (words.length === 1) return name;
+      const last = words.pop();
+      return words.join(' ') + ' <span class="accent">' + last + '</span>';
+    }
+
+    function renderHeader() {
+      document.getElementById('brandSub').innerHTML =
+        `${t('brand_sub_1')}<br><em>${t('brand_sub_2')}</em>`;
+
+      const tabsEl = document.getElementById('cityTabs');
+      const cityOrder = ['all', 'sf', 'mtv', 'cup', 'sc', 'sj'];
+      tabsEl.innerHTML = cityOrder.map(key => {
+        const label = key === 'all' ? t('all') : cityLabel(key);
+        return `<button class="city-tab ${state.activeCity === key ? 'active' : ''}" data-city="${key}">${label}</button>`;
+      }).join('');
+      tabsEl.querySelectorAll('.city-tab').forEach(tab => {
+        tab.addEventListener('click', () => selectCity(tab.dataset.city));
+      });
+
+      document.querySelectorAll('#langToggle button').forEach(b => {
+        b.classList.toggle('active', b.dataset.lang === state.language);
+      });
+
+      document.getElementById('mapHint').innerHTML = t('map_hint');
+
+      document.getElementById('legend').innerHTML = `
+        <div class="legend-title">${t('legend_title')}</div>
+        <div class="legend-item"><div class="legend-dot hotel"></div><span>${t('legend_hotel')}</span></div>
+        <div class="legend-item"><div class="legend-dot kotra"></div><span>${t('legend_kotra')}</span></div>
+        <div class="legend-item"><div class="legend-dot landmark"></div><span>${t('legend_venue')}</span></div>
+      `;
+
+      document.getElementById('compareFabLabel').textContent = t('compare_fab');
+      document.getElementById('compareModalTitle').innerHTML = t('compare_modal_title');
+      document.getElementById('printCompareBtn').textContent = t('print_comparison');
+      document.getElementById('closeCompareBtn').textContent = t('compare_close');
+    }
+
+    function renderPanel() {
+      const city = cities[state.activeCity];
+      const filteredHotels = getFilteredHotels();
+      const filteredLandmarks = state.activeCity === 'all' ? landmarks : landmarks.filter(l => l.city === state.activeCity);
+      const panel = document.getElementById('panel');
+
+      const sortTarget = state.sortBy !== 'default' ? getLandmark(state.sortBy) : null;
+
+      let html = `
+        <div class="panel-eyebrow">${state.activeCity === 'all' ? t('overview') : t('selected_city')}</div>
+        <h1 class="panel-title">${titleWithAccent(city.name)}</h1>
+        <div class="panel-subtitle">${city.name_ko}</div>
+        <div class="panel-counts">
+          <span><b>${filteredHotels.length}</b>${t('hotels')}</span>
+          ${filteredLandmarks.length ? `<span><b>${filteredLandmarks.length}</b>${t('landmarks')}</span>` : ''}
+        </div>
+
+        <div class="search-wrap">
+          <div class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+          <input type="text" class="search-input" id="searchInput" placeholder="${t('search_placeholder')}" value="${state.searchQuery.replace(/"/g, '&quot;')}">
+        </div>
+        <div class="sort-chips">
+          <button class="sort-chip ${state.sortBy === 'default' ? 'active' : ''}" data-sort="default">${t('sort_default')}</button>
+          <button class="sort-chip ${state.sortBy === 'chm' ? 'active' : ''}" data-sort="chm">${t('sort_chm')}</button>
+          <button class="sort-chip ${state.sortBy === 'moscone' ? 'active' : ''}" data-sort="moscone">${t('sort_moscone')}</button>
+          <button class="sort-chip ${state.sortBy === 'kotra' ? 'active' : ''}" data-sort="kotra">${t('sort_kotra')}</button>
+        </div>
+      `;
+
+      if (filteredHotels.length > 0) {
+        html += `
+          <div class="panel-section-head">
+            <h2>${t('kotra_hotels')}</h2>
+            <span class="small">${filteredHotels.length} ${t('listed')}</span>
+          </div>
+        `;
+        filteredHotels.forEach(h => {
+          const fullIdx = hotels.findIndex(x => x.id === h.id) + 1;
+          const isActive = state.activeHotelId === h.id;
+          const isChecked = state.compareIds.has(h.id);
+          const isCheckDisabled = !isChecked && state.compareIds.size >= MAX_COMPARE;
+          let distanceBadge = '';
+          if (sortTarget) {
+            const d = distMiles(h.coord, sortTarget.coord);
+            distanceBadge = `<span class="distance-badge"><span class="to">${sortTarget.short}</span>${formatDistance(d)}</span>`;
+          }
+          html += `
+            <div class="hotel-card ${isActive ? 'active' : ''}" data-hotel="${h.id}">
+              <div class="compare-check ${isChecked ? 'checked' : ''} ${isCheckDisabled ? 'disabled' : ''}" data-check="${h.id}"></div>
+              <div class="hotel-head">
+                <div class="hotel-name">${h.name}</div>
+                <div class="hotel-num">№ ${String(fullIdx).padStart(2, '0')}</div>
+              </div>
+              <div class="hotel-meta">
+                <span class="hotel-city">${h.cityName}</span>
+                ${h.pending_soon ? `<span class="coming-soon-badge">${t('coming_soon')}</span>` : ''}
+                ${distanceBadge}
+              </div>
+              <div class="hotel-price"><span class="approx">${t('rate_label')}</span>${h.rate}</div>
+              <div class="hotel-address">${h.address}</div>
+            </div>
+          `;
+        });
+      } else {
+        html += `
+          <div class="panel-section-head"><h2>${t('kotra_hotels')}</h2></div>
+          <div style="color: var(--ink-faint); font-size: 13px; padding: 16px 0; font-family: 'Noto Sans KR', sans-serif;">
+            ${t('no_hotels')}
+          </div>
+        `;
+      }
+
+      if (filteredLandmarks.length > 0) {
+        html += `
+          <div class="panel-section-head">
+            <h2>${t('venues_office')}</h2>
+            <span class="small">${t('venues_office_sub')}</span>
+          </div>
+        `;
+        filteredLandmarks.forEach(l => {
+          html += `
+            <div class="landmark-card ${l.type === 'kotra' ? 'kotra' : ''}" data-landmark="${l.id}">
+              <div class="landmark-eyebrow">${l.type === 'kotra' ? t('kotra_office') : t('event_venue')}</div>
+              <div class="landmark-name">${l.name}<span class="ko">${l.name_ko}</span></div>
+              <div class="landmark-city">${l.address}</div>
+            </div>
+          `;
+        });
+      }
+
+      html += `
+        <div class="panel-footer">
+          ${t('panel_footer_line1')}<br>
+          ${t('panel_footer_line2')}
+          <div class="updated">${t('last_updated')}: ${LAST_UPDATED}</div>
+        </div>
+      `;
+
+      panel.innerHTML = html;
+
+      // Wire events
+      const searchEl = document.getElementById('searchInput');
+      searchEl.addEventListener('input', (e) => {
+        state.searchQuery = e.target.value;
+        const cursorPos = e.target.selectionStart;
+        renderPanel();
+        // Restore focus
+        const newSearch = document.getElementById('searchInput');
+        if (newSearch) {
+          newSearch.focus();
+          newSearch.setSelectionRange(cursorPos, cursorPos);
+        }
+      });
+
+      panel.querySelectorAll('.sort-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          state.sortBy = chip.dataset.sort;
+          renderPanel();
+        });
+      });
+
+      panel.querySelectorAll('[data-hotel]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          if (e.target.closest('.compare-check')) return;
+          selectHotel(parseInt(el.dataset.hotel));
+        });
+      });
+
+      panel.querySelectorAll('[data-check]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(el.dataset.check);
+          if (state.compareIds.has(id)) {
+            state.compareIds.delete(id);
+          } else if (state.compareIds.size < MAX_COMPARE) {
+            state.compareIds.add(id);
+          }
+          renderPanel();
+          updateCompareFab();
+        });
+      });
+
+      panel.querySelectorAll('[data-landmark]').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = el.dataset.landmark;
+          const lm = landmarks.find(x => x.id === id);
+          if (lm) {
+            const city = cities[lm.city];
+            map.flyTo(lm.coord, city.zoom, { duration: 1.0 });
+            hideHint();
+          }
+        });
+      });
+    }
+
+    function updateActiveTab() {
+      document.querySelectorAll('.city-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.city === state.activeCity);
+      });
+    }
+
+    function selectCity(cityKey) {
+      state.activeCity = cityKey;
+      state.activeHotelId = null;
+      state.searchQuery = '';
+      updateActiveTab();
+      const city = cities[cityKey];
+      map.closePopup();
+      map.flyTo(city.center, city.zoom, { duration: 1.2 });
+      renderPanel();
+      updateMarkerActiveState();
+      hideHint();
+    }
+
+    function selectHotel(id) {
+      const h = hotels.find(x => x.id === id);
+      if (!h) return;
+      if (state.activeCity !== 'all' && state.activeCity !== h.city) {
+        state.activeCity = h.city;
+        updateActiveTab();
+      }
+      state.activeHotelId = id;
+      const targetZoom = Math.max(map.getZoom(), 15);
+      map.flyTo(h.coord, targetZoom, { duration: 1.0 });
+      renderPanel();
+      updateMarkerActiveState();
+      setTimeout(() => { hotelMarkers[id].openPopup(); }, 900);
+      hideHint();
+    }
+
+    function updateMarkerActiveState() {
+      document.querySelectorAll('.marker-hotel').forEach(m => {
+        m.classList.toggle('active', parseInt(m.dataset.id) === state.activeHotelId);
+      });
+    }
+
+    function hideHint() {
+      const hint = document.getElementById('mapHint');
+      if (hint) hint.classList.add('fade');
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       COMPARE
+       ═══════════════════════════════════════════════════════ */
+    function updateCompareFab() {
+      const fab = document.getElementById('compareFab');
+      const count = state.compareIds.size;
+      document.getElementById('compareFabCount').textContent = count + '/' + MAX_COMPARE;
+      if (count >= 2) {
+        fab.hidden = false;
+      } else {
+        fab.hidden = true;
+      }
+    }
+
+    function openCompareModal() {
+      const ids = Array.from(state.compareIds);
+      const compared = ids.map(id => hotels.find(h => h.id === id));
+      const body = document.getElementById('compareModalBody');
+      body.innerHTML = `
+        <div class="compare-grid">
+          ${compared.map(h => buildCompareCard(h)).join('')}
+        </div>
+      `;
+      document.getElementById('compareModal').hidden = false;
+    }
+
+    function buildCompareCard(h) {
+      const num = hotels.findIndex(x => x.id === h.id) + 1;
+      const telLink = h.contact.replace(/[^+\d]/g, '');
+      const bgStyle = `background: linear-gradient(135deg, ${h.color[0]} 0%, ${h.color[1]} 100%);`;
+      const distRows = landmarks.map(l => {
+        const d = distMiles(h.coord, l.coord);
+        return `<div class="row"><span class="to-label">${l.short}</span><span class="dist">${formatDistance(d)}</span></div>`;
+      }).join('');
+      return `
+        <div class="compare-card">
+          <div class="photo" style="${bgStyle}">
+            <div class="num">№ ${String(num).padStart(2, '0')}</div>
+            <div class="city">${h.cityName}</div>
+          </div>
+          <div class="body">
+            <div class="name">${h.name}</div>
+            <div class="addr">${h.address}</div>
+            <div class="compare-row">
+              <span class="lbl">${t('rate_label')}</span>
+              <span class="val">${h.rate}</span>
+            </div>
+            <div class="compare-row">
+              <span class="lbl">${t('promo')}</span>
+              <span class="val code">${h.promo_code}</span>
+            </div>
+            <div class="compare-row">
+              <span class="lbl">${t('contact')}</span>
+              <span class="val"><a href="tel:${telLink}" style="color: var(--kotra-blue); text-decoration: none; border-bottom: 1px solid var(--rule);">${h.contact}</a></span>
+            </div>
+            <div class="compare-distances">
+              <div class="head">Distance</div>
+              ${distRows}
+            </div>
+          </div>
+          <div class="actions">
+            ${h.website
+              ? `<a href="${h.website}" target="_blank" rel="noopener" class="btn primary">${t('book_kotra_rate')}</a>`
+              : h.pending_soon
+                ? `<span class="btn primary coming-soon">${t('coming_soon')}</span>`
+                : `<span class="btn primary disabled">${t('link_pending')}</span>`}
+            <a href="${buildDirections(h.coord)}" target="_blank" rel="noopener" class="btn">${t('get_directions')}</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function closeCompareModal() {
+      document.getElementById('compareModal').hidden = true;
+      document.body.classList.remove('print-comparison');
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       EVENTS
+       ═══════════════════════════════════════════════════════ */
+    document.querySelectorAll('#langToggle button').forEach(b => {
+      b.addEventListener('click', () => {
+        state.language = b.dataset.lang;
+        document.documentElement.lang = state.language;
+        renderHeader();
+        renderPanel();
+        rebuildPopups();
+        // If popup is open, reopen with new language
+        if (state.activeHotelId) {
+          hotelMarkers[state.activeHotelId].openPopup();
+        }
+      });
+    });
+
+    document.getElementById('compareFab').addEventListener('click', openCompareModal);
+    document.getElementById('closeCompareBtn').addEventListener('click', closeCompareModal);
+    document.getElementById('compareModal').addEventListener('click', (e) => {
+      if (e.target.id === 'compareModal') closeCompareModal();
+    });
+    document.getElementById('printCompareBtn').addEventListener('click', () => {
+      document.body.classList.add('print-comparison');
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => document.body.classList.remove('print-comparison'), 100);
+      }, 50);
+    });
+
+    document.getElementById('printBtn').addEventListener('click', () => {
+      window.print();
+    });
+
+    /* ═══════════════════════════════════════════════════════
+       INIT
+       ═══════════════════════════════════════════════════════ */
+    renderHeader();
+    renderPanel();
+    updateCompareFab();
+    setTimeout(hideHint, 9000);
+  </script>
+</body>
+</html>
