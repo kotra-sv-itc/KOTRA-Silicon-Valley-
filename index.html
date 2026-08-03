@@ -479,6 +479,69 @@
     font-size: 11px;
   }
 
+  /* ─── Rental Car Perk Card ─── */
+  .perk-card {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 16px;
+    background: var(--kotra-blue);
+    border: 1px solid var(--kotra-blue);
+    border-radius: 3px;
+    text-decoration: none;
+    color: var(--paper);
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .perk-card:hover {
+    background: #16306E;
+    transform: translateY(-1px);
+  }
+  .perk-icon {
+    flex-shrink: 0;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.14);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .perk-icon svg {
+    width: 20px; height: 20px;
+    stroke: var(--paper); fill: none; stroke-width: 1.6;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .perk-text { flex: 1; min-width: 0; }
+  .perk-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .perk-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.15;
+    margin-bottom: 3px;
+    letter-spacing: -0.005em;
+    color: var(--paper);
+  }
+  .perk-desc {
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.4;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .perk-arrow {
+    flex-shrink: 0;
+    font-size: 16px;
+    color: rgba(255,255,255,0.8);
+    transition: transform 0.18s ease;
+  }
+  .perk-card:hover .perk-arrow { transform: translateX(3px); }
+  @media print { .perk-card { display: none !important; } }
+
   /* ─── Map ─── */
   #map-wrap { position: relative; flex: 1; height: 100%; }
   #map { width: 100%; height: 100%; background: #E8E2D2; }
@@ -1343,6 +1406,10 @@
         map_hint: '<b>마커</b>나 좌측 호텔을 클릭하면 지도 위에 상세 카드가 나타납니다.',
         panel_footer_line1: 'KOTRA Silicon Valley IT Business Center',
         panel_footer_line2: '요금은 변동될 수 있으며 예약 시 확인 부탁드립니다.',
+        perk_eyebrow: '협약 렌터카',
+        perk_title: '렌터카 예약',
+        perk_desc: '제휴 렌터카 예약 신청 링크입니다.',
+        perk_button: '신청하기',
         kotra_office: 'KOTRA Office',
         event_venue: 'Event Venue',
         legend_title: 'Legend · 범례',
@@ -1385,6 +1452,10 @@
         map_hint: 'Click a <b>marker</b> or a hotel in the sidebar to see details.',
         panel_footer_line1: 'KOTRA Silicon Valley IT Business Center',
         panel_footer_line2: 'Rates subject to change. Please confirm before booking.',
+        perk_eyebrow: 'Partner Rental Car',
+        perk_title: 'Rental Car Booking',
+        perk_desc: 'Reservation link for our partner rental car service.',
+        perk_button: 'Apply',
         kotra_office: 'KOTRA Office',
         event_venue: 'Event Venue',
         legend_title: 'Legend',
@@ -1743,6 +1814,20 @@
           `;
         });
       }
+
+      html += `
+        <a class="perk-card" href="https://form.jotform.com/SamsungHospitality/KOTRA-SHA_RentalCar" target="_blank" rel="noopener">
+          <div class="perk-icon">
+            <svg viewBox="0 0 24 24"><path d="M5 13l1.5-4.5A2 2 0 0 1 8.4 7h7.2a2 2 0 0 1 1.9 1.5L19 13"></path><path d="M3 13h18v4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path><circle cx="7" cy="15.5" r="0.6" fill="currentColor"></circle><circle cx="17" cy="15.5" r="0.6" fill="currentColor"></circle></svg>
+          </div>
+          <div class="perk-text">
+            <div class="perk-eyebrow">${t('perk_eyebrow')}</div>
+            <div class="perk-title">${t('perk_title')}</div>
+            <div class="perk-desc">${t('perk_desc')}</div>
+          </div>
+          <div class="perk-arrow">→</div>
+        </a>
+      `;
 
       html += `
         <div class="panel-footer">
